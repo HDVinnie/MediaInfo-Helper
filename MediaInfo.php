@@ -1,6 +1,6 @@
 <?php
 
-namespace Helpers\MediaInfo;
+namespace App\Helpers;
 
 class Parser
 {

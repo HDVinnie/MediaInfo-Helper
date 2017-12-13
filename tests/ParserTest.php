@@ -1,8 +1,12 @@
 <?php
 
-class ParserTest extends PHPUnit_Framework_TestCase
+namespace HDVinnie\MediaInfoHelper;
+
+use PHPUnit\Framework\TestCase;
+
+class ParserTest extends TestCase
 {
-    
+
     private $mediaInfo = "
 General
 Unique ID                                : 219102665597174011678599313130461357976 (0xA4D5A371E8BF9508B5633D2484186798)
@@ -580,7 +584,7 @@ Menu
 
     public function testGeneralInformation()
     {
-        $parser = new \Helpers\MediaInfo;
+        $parser = new Parser();
         $parsed = $parser->parse($this->mediaInfo);
 
         $this->assertArrayHasKey('general', $parsed);
@@ -599,7 +603,7 @@ Menu
 
     public function testVideoInformation()
     {
-        $parser = new \Helpers\MediaInfo;
+        $parser = new Parser();
         $parsed = $parser->parse($this->mediaInfo);
 
         $this->assertArrayHasKey('video', $parsed);
@@ -631,7 +635,7 @@ Menu
 
     public function testAudioInformation()
     {
-        $parser = new \Helpers\MediaInfo;
+        $parser = new Parser();
         $parsed = $parser->parse($this->mediaInfo);
 
         $this->assertArrayHasKey('audio', $parsed);

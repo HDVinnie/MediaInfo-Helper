@@ -6,7 +6,6 @@ use PHPUnit\Framework\TestCase;
 
 class ParserTest extends TestCase
 {
-
     private $mediaInfo = "
 General
 Unique ID                                : 219102665597174011678599313130461357976 (0xA4D5A371E8BF9508B5633D2484186798)

@@ -23,11 +23,9 @@ class Parser
             }
         }
 
-
         if (count($output)) {
             $output = $this->parseSections($output);
         }
-
 
         return $this->formatOutput($output);
     }
@@ -61,7 +59,6 @@ class Parser
             }
             if ($property && $value) {
                 switch ($section) {
-
                     case 'general':
                         switch ($property) {
                             case "complete name":
@@ -123,7 +120,11 @@ class Parser
                                 break;
                             case "display aspect ratio":
                             case "displayaspectratio":
-                                $output['aspect_ratio'] = str_replace("/", ":", $value); // mediainfo sometimes uses / instead of :
+                                $output['aspect_ratio'] = str_replace(
+                                    "/",
+                                    ":",
+                                    $value
+                                ); // mediainfo sometimes uses / instead of :
                                 break;
                             case "bit rate":
                             case "bitrate":
@@ -210,7 +211,6 @@ class Parser
                                 break;
                         }
                         break;
-
                 }
             }
         }
@@ -229,7 +229,7 @@ class Parser
         $number = (float)$string;
         preg_match("/[KMGTPEZ]/i", $string, $size);
         if (!empty($size[0])) {
-            $number = $this->computerSize($number, $size[0] . 'b');
+            $number = $this->computerSize($number, $size[0].'b');
         }
 
         return $number;
@@ -273,18 +273,17 @@ class Parser
 
     private function parseAudioFormat($string)
     {
-
     }
 
     private function computerSize($number, $size)
     {
-        $bytes = (float) $number;
+        $bytes = (float)$number;
         $size = strtolower($size);
 
         $factors = ['b' => 0, 'kb' => 1, 'mb' => 2, 'gb' => 3, 'tb' => 4, 'pb' => 5, 'eb' => 6, 'zb' => 7, 'yb' => 8];
 
         if (isset($factors[$size])) {
-            return (float) number_format($bytes * pow(1024, $factors[$size]), 2, '.', '');
+            return (float)number_format($bytes * pow(1024, $factors[$size]), 2, '.', '');
         }
 
         return $bytes;

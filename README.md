@@ -20,3 +20,9 @@ Returns an array containing the parsed information.
 $parser = new Parser();
 $parsed = $parser->parse($mediaInfo);
 ```
+
+## Testing
+
+``` bash
+$ composer test
+```

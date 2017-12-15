@@ -2,7 +2,7 @@
 
 namespace HDVinnie\MediaInfoHelper;
 
-class Parser
+class MediaInfo
 {
     private $regex_section = "/^(?:(?:general|video|audio|text|menu)(?:\s\#\d+?)*)$/i";
 

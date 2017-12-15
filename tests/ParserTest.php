@@ -583,7 +583,7 @@ Menu
 
     public function testGeneralInformation()
     {
-        $parser = new Parser();
+        $parser = new MediaInfo();
         $parsed = $parser->parse($this->mediaInfo);
 
         $this->assertArrayHasKey('general', $parsed);
@@ -602,7 +602,7 @@ Menu
 
     public function testVideoInformation()
     {
-        $parser = new Parser();
+        $parser = new MediaInfo();
         $parsed = $parser->parse($this->mediaInfo);
 
         $this->assertArrayHasKey('video', $parsed);
@@ -634,7 +634,7 @@ Menu
 
     public function testAudioInformation()
     {
-        $parser = new Parser();
+        $parser = new MediaInfo();
         $parsed = $parser->parse($this->mediaInfo);
 
         $this->assertArrayHasKey('audio', $parsed);

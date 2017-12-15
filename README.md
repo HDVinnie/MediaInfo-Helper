@@ -17,7 +17,7 @@ $ composer require hdvinnie/mediainfo-helper
 Returns an array containing the parsed information.
 
 ```php
-$parser = new Parser();
+$parser = new MediaInfo();
 $parsed = $parser->parse($mediaInfo);
 ```
 

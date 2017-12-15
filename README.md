@@ -28,4 +28,4 @@ $ composer test
 ```
 
 ## License
-[The MIT License](LICENSE.md)
+[The MIT License](LICENSE)

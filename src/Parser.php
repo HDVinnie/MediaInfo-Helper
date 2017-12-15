@@ -271,10 +271,6 @@ class Parser
         return $output;
     }
 
-    private function parseAudioFormat($string)
-    {
-    }
-
     private function computerSize($number, $size)
     {
         $bytes = (float)$number;

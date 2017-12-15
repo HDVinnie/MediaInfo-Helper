@@ -1,7 +1,7 @@
 {
     "name": "hdvinnie/mediainfo-helper",
     "type": "library",
-    "description": "A Laravel Helper For Parsing MediaInfo Dumps",
+    "description": "A Laravel helper for parsing MediaInfo dumps.",
     "require": {
         "php": "^7.0"
     },

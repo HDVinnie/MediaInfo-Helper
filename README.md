@@ -1,2 +1,3 @@
 # MediaInfo-Helper
-Laravel Helper For Parsing MediaInfo Dumps
+
+A Laravel helper for parsing MediaInfo dumps.

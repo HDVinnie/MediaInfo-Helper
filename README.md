@@ -18,5 +18,5 @@ Returns an array containing the parsed information.
 
 ```php
 $parser = new Parser();
-$parsed = $parser->parse($this->mediaInfo);
+$parsed = $parser->parse($mediaInfo);
 ```

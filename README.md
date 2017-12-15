@@ -26,3 +26,6 @@ $parsed = $parser->parse($mediaInfo);
 ``` bash
 $ composer test
 ```
+
+## License
+[The MIT License](LICENSE.md)

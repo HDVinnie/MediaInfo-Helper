@@ -226,6 +226,7 @@ class MediaInfo
 
     private function parseFileSize($string)
     {
+		$string = str_replace(' ', '', $string);
         $number = (float)$string;
         preg_match("/[KMGTPEZ]/i", $string, $size);
         if (!empty($size[0])) {

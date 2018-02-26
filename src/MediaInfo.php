@@ -1,4 +1,14 @@
 <?php
+/**
+ * NOTICE OF LICENSE
+ *
+ * MediaInfo-Helper is open-sourced software licensed under the MIT License.
+ * The details is bundled with this project in the file LICENSE.txt.
+ *
+ * @project    MediaInfo-Helper
+ * @license    MIT
+ * @author     HDVinnie
+ */
 
 namespace HDVinnie\MediaInfoHelper;
 
@@ -13,7 +23,7 @@ class MediaInfo
 
         $output = [];
         foreach ($lines as $line) {
-            $line = trim(strtolower($line));
+            $line = trim($line); // removed strtolower, unnecessary with the i-switch in the regexp (caseless) and adds problems with values; added it in the required places instead.
             if (preg_match($this->regex_section, $line)) {
                 $section = $line;
                 $output[$section] = [];
@@ -23,9 +33,11 @@ class MediaInfo
             }
         }
 
+
         if (count($output)) {
             $output = $this->parseSections($output);
         }
+
 
         return $this->formatOutput($output);
     }
@@ -34,7 +46,7 @@ class MediaInfo
     {
         $output = [];
         foreach ($sections as $key => $section) {
-            $key_section = explode(' ', $key)[0];
+            $key_section = strtolower(explode(' ', $key)[0]);
             if (!empty($section)) {
                 if ($key_section == 'general') {
                     $output[$key_section] = $this->parseProperty($section, $key_section);
@@ -54,16 +66,16 @@ class MediaInfo
             $value = null;
             $info = explode(":", $info, 2);
             if (count($info) >= 2) {
-                $property = trim($info[0]);
+                $property = trim(strtolower($info[0]));
                 $value = trim($info[1]);
             }
             if ($property && $value) {
-                switch ($section) {
+                switch (strtolower($section)) {
                     case 'general':
                         switch ($property) {
                             case "complete name":
                             case "completename":
-                                $output['file_name'] = $this->stripPath($value);
+                                $output['file_name'] = self::stripPath($value);
                                 break;
                             case "format":
                                 $output['format'] = $value;
@@ -120,11 +132,7 @@ class MediaInfo
                                 break;
                             case "display aspect ratio":
                             case "displayaspectratio":
-                                $output['aspect_ratio'] = str_replace(
-                                    "/",
-                                    ":",
-                                    $value
-                                ); // mediainfo sometimes uses / instead of :
+                                $output['aspect_ratio'] = str_replace("/", ":", $value); // mediainfo sometimes uses / instead of :
                                 break;
                             case "bit rate":
                             case "bitrate":
@@ -151,6 +159,18 @@ class MediaInfo
                                 break;
                             case "language":
                                 $output['language'] = $value;
+                                break;
+                            case "format profile":
+                                $output['format_profile'] = $value;
+                                break;
+                            case "title":
+                                $output['title'] = $value;
+                                break;
+                            case "color primaries":
+                                $output['title'] = $value;
+                                break;
+                            case "scan type":
+                                $output['scan_type'] = $value;
                                 break;
                         }
                         break;
@@ -217,7 +237,7 @@ class MediaInfo
         return $output;
     }
 
-    private function stripPath($string)
+    public static function stripPath($string)
     {
         $string = str_replace("\\", "/", $string);
         $path_parts = pathinfo($string);
@@ -229,7 +249,7 @@ class MediaInfo
         $number = (float)$string;
         preg_match("/[KMGTPEZ]/i", $string, $size);
         if (!empty($size[0])) {
-            $number = $this->computerSize($number, $size[0].'b');
+            $number = $this->computerSize($number, $size[0] . 'b');
         }
 
         return $number;
@@ -237,19 +257,19 @@ class MediaInfo
 
     private function parseBitRate($string)
     {
-        $string = str_replace(' ', '', $string);
+        $string = str_replace(' ', '', strtolower($string));
         $string = str_replace('kbps', ' kbps', $string);
         return $string;
     }
 
     private function parseWidthHeight($string)
     {
-        return str_replace(array('pixels', ' '), null, $string);
+        return str_replace(['pixels', ' '], null, strtolower($string));
     }
 
     private function parseAudioChannels($string)
     {
-        $replace = array(
+        $replace = [
             ' ' => '',
             'channels' => 'ch',
             'channel' => 'ch',
@@ -257,7 +277,7 @@ class MediaInfo
             '7ch' => '6.1ch',
             '6ch' => '5.1ch',
             '2ch' => '2.0ch'
-        );
+        ];
         return str_ireplace(array_keys($replace), $replace, $string);
     }
 
@@ -269,6 +289,100 @@ class MediaInfo
         $output['audio'] = !empty($data['audio']) ? $data['audio'] : null;
         $output['text'] = !empty($data['text']) ? $data['text'] : null;
         return $output;
+    }
+
+    public function prepareViewCrumbs($data)
+    {
+        $output = ["general"=>[],"video"=>[],"audio"=>[]];
+
+        $general_crumbs = ["format"=>"ucfirst","duration"=>null];
+
+        if ($data['general'] === null) {
+            $output["general"] = null;
+        } else {
+            if (isset($data['general']['format'])) {
+                $output['general'][] = ucfirst($data['general']['format']);
+            }
+            if (isset($data['general']['duration'])) {
+                $output['general'][] = $data['general']['duration'];
+            }
+        }
+
+        if ($data['video'] === null) {
+            $output["video"] = null;
+        } else {
+            $temp_output = [];
+            foreach ($data["video"] as $video_element) {
+                $temp_video_output = [];
+                if (isset($video_element['format'])) {
+                    $temp_video_output[] = strtoupper($video_element['format']);
+                }
+                if (isset($video_element['width']) && isset($video_element['height'])) {
+                    $temp_video_output[] = $video_element['width']." x ".$video_element['height'];
+                }
+                foreach (["aspect_ratio","frame_rate","bit_depth","bit_rate","format_profile","scan_type","title","color primaries"] as $property) {
+                    if (isset($video_element[$property])) {
+                        $temp_video_output[] = $video_element[$property];
+                    }
+                }
+
+                if (!empty($temp_video_output)) {
+                    $temp_output[]=$temp_video_output;
+                }
+            }
+
+            $output["video"] = !empty($temp_output) ? $temp_output : null;
+        }
+
+        if ($data['audio'] === null) {
+            $output["audio"] = null;
+        } else {
+            $temp_output = [];
+            foreach ($data["audio"] as $audio_element) {
+                $temp_audio_output = [];
+                foreach (["language","format","channels","bit_rate","title"] as $property) {
+                    if (isset($audio_element[$property])) {
+                        $temp_audio_output[] = $audio_element[$property];
+                    }
+                }
+
+                if (!empty($temp_audio_output)) {
+                    $temp_output[]=$temp_audio_output;
+                }
+            }
+
+            $output["audio"] = !empty($temp_output) ? $temp_output : null;
+        }
+
+        if ($data['text'] === null) {
+            $output["text"] = null;
+        } else {
+            $temp_output = [];
+            foreach ($data["text"] as $text_element) {
+                $temp_text_output = [];
+                foreach (["language","format","title"] as $property) {
+                    if (isset($text_element[$property])) {
+                        $temp_text_output[] = $text_element[$property];
+                    }
+                }
+                if (isset($text_element['forced']) && strtolower($text_element['forced']) == "yes") {
+                    $temp_text_output[] = "Forced";
+                }
+
+                if (!empty($temp_text_output)) {
+                    $temp_output[]=$temp_text_output;
+                }
+            }
+
+            $output["text"] = !empty($temp_output) ? $temp_output : null;
+        }
+
+
+        return $output;
+    }
+
+    private function parseAudioFormat($string)
+    {
     }
 
     private function computerSize($number, $size)
